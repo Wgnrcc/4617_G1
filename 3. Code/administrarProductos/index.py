@@ -77,7 +77,7 @@ class Product:
 
     # Validación de las entradas del usuario
     def validation(self):
-        return len(self.name.get()) != 0 and len(self.price.get()) != 0
+        return len(self.name.get()) != 0 and len(self.price.get()) != 0 
 
     def add_product(self):
         if self.validation():
