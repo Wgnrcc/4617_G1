@@ -9,9 +9,9 @@ def validarInicioSesion(usuario, contraseña):
         # Si el usuario o la contraseña están vacíos, se muestra un mensaje de error
         sg.popup_error("Error", "Por favor, ingrese un usuario y contraseña")
     else:
-        if (usuario == "admin" and contraseña == "admin123"):
+        if (usuario == "juan23" and contraseña == "201020"):
             # Si el usuario y la contraseña son correctos, se muestra una notificación de acceso correcto
-            sg.popup_ok("Éxito", "Bienvenido administrador")
+            sg.popup_ok("Éxito", "Bienvenido usuario")
         else:
             # Si el usuario o la contraseña son incorrectos, se muestra un mensaje de error
             sg.popup_error("Error", "Usuario o contraseña incorrectos")
