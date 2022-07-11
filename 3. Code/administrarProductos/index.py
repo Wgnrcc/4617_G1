@@ -29,7 +29,7 @@ class Product:
         self.price = Entry(frame)
         self.price.grid(row = 2, column = 1)
 
-        # Entrada para el proveedor del producto
+        # Entrada para el ID del producto
         #Label(frame, text = 'Proveedor del producto: ').grid(row = 3, column = 0)
         #self.provider = Entry(frame)
         #self.provider.grid(row = 3, column = 1)
