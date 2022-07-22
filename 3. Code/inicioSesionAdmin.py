@@ -1,7 +1,7 @@
 #Programa que permite iniciar sesion como administrador a través de una interfaz gráfica
 
 import PySimpleGUI as sg
-sg.theme('DarkPurple1')
+sg.theme('TealMono')
 
 # Función para validar el inicio de sesión
 def validarInicioSesion(usuario, contraseña):
