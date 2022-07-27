@@ -3,7 +3,7 @@
 
 import sqlite3
 import PySimpleGUI as sg
-sg.theme('TealMono')
+sg.theme('SystemDefault1')
     
 #Definición de la interfaz gráfica con campos de texto y botón y etiquetas
 layout = [

@@ -7,7 +7,7 @@ import sqlite3
 
 class Product:
     # Conexión con la base de datos
-    db_name = 'database.db'
+    db_name = 'administrarProductos.db'
 
     def __init__(self, window):
         # Ventana Principal 
