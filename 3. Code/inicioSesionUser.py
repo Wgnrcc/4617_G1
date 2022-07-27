@@ -74,12 +74,10 @@ while True:
             else:
                 sg.popup_error("Error", "Por favor, ingrese un usuario y contraseña")
                 break
-    #Si se presiona cualquier otra tecla, se muestra un mensaje de error
-    else:
-        sg.popup_error("Error", "Por favor, ingrese un usuario y contraseña")
-        break
     #Si se presiona el botón de cancelar, se cierra la ventana
     if event == 'Cancelar':
         window.close()
+        break
+    elif event == sg.WIN_CLOSED:
         break
 

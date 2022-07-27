@@ -67,6 +67,8 @@ while True:
     elif event == 'Cancelar':
         #Si se presiona el botón de cancelar, se cierra la ventana
         break
+    elif event == sg.WIN_CLOSED:
+        break
 window.close()
 
 

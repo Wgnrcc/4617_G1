@@ -43,6 +43,12 @@ while True:
         os.system('python administrarProductos.py')
     elif event == 'Salir':
         break
+    elif event == sg.WIN_CLOSED:
+        break
+
+# Cierra la ventana
+window.close()
+
 
 
 
