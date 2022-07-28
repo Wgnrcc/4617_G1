@@ -19,7 +19,10 @@ def validarInicioSesion(usuario, contraseña):
 def validarRegistro(usuarioNuevo, contraseñaNueva, nombre, apellido, correo, cedula, telefono):
     if (usuarioNuevo == "" or contraseñaNueva == "" or nombre == "" or apellido == "" or correo == "" or cedula == "" or telefono == ""):
         # Si los datos solicitados están vacíos, se muestra un mensaje de error
-        sg.popup_error("Error, datos incompletos", "Por favor, ingrese todos los datos solicitados")
+        sg.popup_ok("Error, datos incompletos", "Por favor, ingrese todos los datos solicitados")
+    else:
+        sg.popup_ok("Éxito", "Usuario registrado")
+        
 
 #Definición de la interfaz gráfica con una imagen, campos de texto y botón y etiquetas
 layout = [
@@ -65,18 +68,12 @@ while True:
             if event == 'Registrar':
                 #Si se presiona el botón de registrar, se ejecuta la función validarRegistro
                 validarRegistro(values['usuarioNuevo'], values['contraseñaNueva'], values['nombre'], values['apellido'], values['correo'], values['cedula'], values['telefono'])
-                #sg.popup_ok("Éxito", "Usuario registrado")
-                #window.close()
-                break
             elif event == 'Cancelar':
-                window.close()
                 break
-            else:
-                sg.popup_error("Error", "Por favor, ingrese un usuario y contraseña")
+            elif event == sg.WIN_CLOSED:
                 break
     #Si se presiona el botón de cancelar, se cierra la ventana
     if event == 'Cancelar':
-        window.close()
         break
     elif event == sg.WIN_CLOSED:
         break
