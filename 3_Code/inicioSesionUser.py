@@ -1,32 +1,69 @@
 #Programa que permite iniciar sesion como administrador a través de una interfaz gráfica
 
+from pydoc import doc
 import PySimpleGUI as sg
 sg.theme('SystemDefault1')
+import sqlite3
+db_name = 'usuarios.db'
 
-# Función para validar el inicio de sesión
+#Función para ejecutar consultas de base de datos
+def run_query(query, parameters = ()):
+    with sqlite3.connect(db_name) as conn:
+        cursor = conn.cursor()
+        result = cursor.execute(query, parameters)
+        conn.commit()
+    return result
+
+#Obtner el nombre de usuario y contraseña de la base de datos
+def getUsuario():
+    query = 'SELECT * FROM usuarios'
+    db_rows = run_query(query)
+    return db_rows 
+
+# Función para validar el inicio de sesión usando la base de datos
 def validarInicioSesion(usuario, contraseña):
+    #Verifica que los campos no estén vacíos
     if (usuario == "" or contraseña == ""):
-        # Si el usuario o la contraseña están vacíos, se muestra un mensaje de error
-        sg.popup_error("Error", "Por favor, ingrese un usuario y contraseña")
+        sg.popup_ok("Error, datos incompletos", "Por favor, ingrese todos los datos solicitados")
     else:
-        if (usuario == "juan23" and contraseña == "201020"):
-            # Si el usuario y la contraseña son correctos, se muestra una notificación de acceso correcto
-            sg.popup_ok("Éxito", "Bienvenido usuario")
-        else:
-            # Si el usuario o la contraseña son incorrectos, se muestra un mensaje de error
-            sg.popup_error("Error", "Usuario o contraseña incorrectos")
+    #Obtiene los datos de la base de datos mediante la funcion getUsuario()
+        db_rows = getUsuario()
+        #Recorre la base de datos
+        for row in db_rows:
+            #Si el usuario ingresado es igual al usuario de la base de datos
+            if (usuario == row[0]):
+                #Si la contraseña ingresada es igual a la contraseña de la base de datos
+                if (contraseña == row[1]):
+                    #Si los datos son correctos, se muestra un mensaje de éxito
+                    sg.popup_ok("Bienvenido", "Inicio de sesión exitoso")
+                    #Se retorna True
+                    return True
+                else:
+                    #Si los datos son incorrectos, se muestra un mensaje de error
+                    sg.popup_ok("Error", "Contraseña incorrecta")
+                    #Se retorna False
+                    return False
+        #Si el usuario no existe, se muestra un mensaje de error
+        sg.popup_ok("Error", "El usuario ingresado no existe")
+        #Se retorna False
+        return False
+
 
 def validarRegistro(usuarioNuevo, contraseñaNueva, nombre, apellido, correo, cedula, telefono):
+    #Verifica que el correo electrónico sea válido (si falta @ y .com mostrar error)
+    #if (correo.find("@") == -1 or correo.find(".com") == -1):
+        #sg.popup_ok("Error", "Correo electrónico inválido")
+        #return False
     if (usuarioNuevo == "" or contraseñaNueva == "" or nombre == "" or apellido == "" or correo == "" or cedula == "" or telefono == ""):
         # Si los datos solicitados están vacíos, se muestra un mensaje de error
         sg.popup_ok("Error, datos incompletos", "Por favor, ingrese todos los datos solicitados")
     else:
         sg.popup_ok("Éxito", "Usuario registrado")
         
-
 #Definición de la interfaz gráfica con una imagen, campos de texto y botón y etiquetas
 layout = [
-    #[sg.Image(r'imagenes/logo.png', size=(200, 100))],
+    [sg.Image(r'logo.png', size=(100, 100), pad=(175, 0))],
+    [sg.Text('Inicio de sesión y Registro', size=(25, 1), justification='center', pad=(75, 0), font=("Helvetica", 15))],
     [sg.Text('Usuario', size=(15, 1)), sg.InputText(key='usuario')],
     [sg.Text('Contraseña', size=(15, 1)), sg.InputText(key='contraseña', password_char='*')],
     [sg.Button('Iniciar sesión'), sg.Button('Cancelar'), sg.Button('Registrarse')]
@@ -68,6 +105,10 @@ while True:
             if event == 'Registrar':
                 #Si se presiona el botón de registrar, se ejecuta la función validarRegistro
                 validarRegistro(values['usuarioNuevo'], values['contraseñaNueva'], values['nombre'], values['apellido'], values['correo'], values['cedula'], values['telefono'])
+                #Guarda los datos ingresados en la base de datos
+                query = 'INSERT INTO usuarios (usuario, contraseña, nombre, apellido, correo, cedula, telefono) VALUES ("{}", "{}", "{}", "{}", "{}", "{}", "{}")'.format(values['usuarioNuevo'], values['contraseñaNueva'], values['nombre'], values['apellido'], values['correo'], values['cedula'], values['telefono'])
+                parameters = ()
+                run_query(query, parameters)
             elif event == 'Cancelar':
                 break
             elif event == sg.WIN_CLOSED:
@@ -77,4 +118,3 @@ while True:
         break
     elif event == sg.WIN_CLOSED:
         break
-

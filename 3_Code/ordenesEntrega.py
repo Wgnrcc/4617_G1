@@ -2,14 +2,23 @@
 #!/usr/bin/env python3
 
 import sqlite3
+db_name = 'ordenesEntrega.db'
 import PySimpleGUI as sg
 sg.theme('SystemDefault1')
+
+#Funcion para ejecutar consultas de base de datos
+def run_query(query, parameters = ()):
+    with sqlite3.connect(db_name) as conn:
+        cursor = conn.cursor()
+        result = cursor.execute(query, parameters)
+        conn.commit()
+    return result
     
 #Definición de la interfaz gráfica con campos de texto y botón y etiquetas
 layout = [
     [sg.Text('Código de orden', size=(15, 1)), sg.InputText(key='codigo')],
-    [sg.Text('Cliente', size=(15, 1)), sg.InputText(key='cantidad')],
-    [sg.Text('Nombre del producto', size=(15, 1)), sg.InputText(key='codigoProducto')],
+    [sg.Text('Cliente', size=(15, 1)), sg.InputText(key='cliente')],
+    [sg.Text('Nombre del producto', size=(15, 1)), sg.InputText(key='nombreProducto')],
     [sg.Text('Fecha de entrega', size=(15, 1)), sg.InputText(key='fecha')],
     [sg.Text('Dirección de entrega', size=(15, 1)), sg.InputText(key='direccion')],
     [sg.Button('Agregar'), sg.Button('Cancelar')]
@@ -24,16 +33,24 @@ def agregarOrden():
     confirmacion = sg.popup_yes_no('¿Desea agregar la orden?')
     #Si se presiona la opción si
     if confirmacion == 'Yes':
-        #Mensaje de orden agregada
+        #Guarda los datos en la base de datos con la función run_query
+        query = 'INSERT INTO ordenes (codigo, cliente, nombre, fecha, direccion) VALUES ("{}", "{}", "{}", "{}", "{}")'.format(values['codigo'], values['cliente'], values['nombreProducto'], values['fecha'], values['direccion'])
+        parameters = ()
+        run_query(query, parameters)
+        #Muestra un mensaje de confirmación
         sg.popup('Orden agregada')
-        #Cerrar el programa
-        exit()
+        #Limpia los campos de texto
+        window['codigo'].update('')
+        window['cliente'].update('')
+        window['nombreProducto'].update('')
+        window['fecha'].update('')
+        window['direccion'].update('')
     #Si se presiona la opción no
     if confirmacion == 'No':
         #Limpia los campos de texto del menú principal
         window['codigo'].update('')
-        window['cantidad'].update('')
-        window['codigoProducto'].update('')
+        window['cliente'].update('')
+        window['nombreProducto'].update('')
         window['fecha'].update('')
         window['direccion'].update('')
 
@@ -59,7 +76,7 @@ while True:
     event, values = window.read()
     if event == 'Agregar':
         #Si se presiona el botón de agregar, se verifica que los campos no estén vacíos
-        if values['codigo'] == '' or values['cantidad'] == '' or values['codigoProducto'] == '' or values['fecha'] == '' or values['direccion'] == '':
+        if values['codigo'] == '' or values['cliente'] == '' or values['nombreProducto'] == '' or values['fecha'] == '' or values['direccion'] == '':
             sg.popup_error("Error", "Por favor, ingrese todos los datos")
         else:
             #Si los campos no están vacíos, se ejecuta la función agregarOrden
