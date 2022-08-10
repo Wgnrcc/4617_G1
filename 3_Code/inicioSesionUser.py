@@ -116,6 +116,13 @@ def validarRegistro(usuarioNuevo, contraseñaNueva, nombre, apellido, correo, ce
             parameters = ()
             run_query(query, parameters)
             sg.popup_ok("Éxito", "Usuario registrado")
+            window['usuarioNuevo'].update('')
+            window['contraseñaNueva'].update('')
+            window['nombre'].update('')
+            window['apellido'].update('')
+            window['correo'].update('')
+            window['cedula'].update('')
+            window['telefono'].update('')
             
         if (confirmacion == "No"):
             # Limpia los campos de texto usando window.update()
