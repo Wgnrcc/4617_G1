@@ -1,5 +1,4 @@
-#Programa de ordenes de entrega utilizando PySimpleGUI y SQLite
-#!/usr/bin/env python3
+#Programa de ordenes de entrega 
 
 import sqlite3
 db_name = 'ordenesEntrega.db'

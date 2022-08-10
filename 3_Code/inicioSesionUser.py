@@ -7,8 +7,6 @@ sg.theme('SystemDefault1')
 db_name = 'usuarios.db'
 
 # Función para ejecutar consultas de base de datos
-
-
 def run_query(query, parameters=()):
     with sqlite3.connect(db_name) as conn:
         cursor = conn.cursor()
@@ -17,8 +15,6 @@ def run_query(query, parameters=()):
     return result
 
 # Obtner el nombre de usuario y contraseña de la base de datos
-
-
 def getUsuario():
     query = 'SELECT * FROM usuarios'
     db_rows = run_query(query)
@@ -44,6 +40,22 @@ def validarCedula(cedula):
             return True
         else:
             return False
+    else:
+        return True
+
+def validarTelefono(telefono):
+    # Verifica que los dígitos del número de celular sean solo números
+    for i in range(len(telefono)):
+        if (telefono[i].isdigit() == False):
+            sg.popup_error("Error", "El número de celular debe tener solo números")
+            return False
+    if (len(telefono) != 10):
+        sg.popup_error("Error", "El número de celular debe tener 10 dígitos")
+        return False
+    # Verifica que los dos primeros dígitos 0 y 9
+    elif (int(telefono[0:2]) != 0 and int(telefono[0:2]) != 9):
+        sg.popup_error("Error", "El número de celular debe empezar con 09")
+        return False
     else:
         return True
 
@@ -78,28 +90,45 @@ def validarInicioSesion(usuario, contraseña):
 
 
 def validarRegistro(usuarioNuevo, contraseñaNueva, nombre, apellido, correo, cedula, telefono):
-    # Verifica que el correo electrónico sea válido (si falta @ y .com mostrar error)
-    if (correo.find("@") == -1 or correo.find(".com") == -1):
-        sg.popup_ok("Error", "Correo electrónico inválido")
-        return False
-    # Llama a la funcion validarCedula() para validar la cedula, si es incorrecta, se muestra un mensaje de error
-    if (validarCedula(cedula) == False):
-        sg.popup_error("Error", "Cedula incorrecta")
-        return False
     # Verifica que los campos no estén vacíos
     if (usuarioNuevo == "" or contraseñaNueva == "" or nombre == "" or apellido == "" or correo == "" or cedula == "" or telefono == ""):
         # Si los datos solicitados están vacíos, se muestra un mensaje de error
         sg.popup_ok("Error, datos incompletos", "Por favor, ingrese todos los datos solicitados")
+    # Verifica que el correo electrónico sea válido (si falta @ y .com mostrar error)
+    elif (correo.find("@") == -1 or correo.find(".com") == -1):
+        sg.popup_error("Error", "Correo electrónico inválido")
+        return False
+    # Llama a la funcion validarCedula() para validar la cedula, si es incorrecta, se muestra un mensaje de error
+    elif (validarCedula(cedula) == False):
+        sg.popup_error("Error", "Cedula incorrecta")
+        return False
+    # Llamada a la funcion validarTelefon() para validar el número de celular, si es incorrecto, se muestra un mensaje de error
+    elif (validarTelefono(telefono) == False):
+        sg.popup_error("Error", "Por favor, corrija el número de teléfono")
+        return False
     else:
-        query = 'INSERT INTO usuarios (usuario, contraseña, nombre, apellido, correo, cedula, telefono) VALUES ("{}", "{}", "{}", "{}", "{}", "{}", "{}")'.format(
-        values['usuarioNuevo'], values['contraseñaNueva'], values['nombre'], values['apellido'], values['correo'], values['cedula'], values['telefono'])
-        parameters = ()
-        run_query(query, parameters)
-        sg.popup_ok("Éxito", "Usuario registrado")
-
+        #Muestra una ventana de confirmación para registrar el usuario
+        confirmacion = sg.popup_yes_no("¿Está seguro de que desea registrar el usuario?", "¿Desea registrar el usuario?")
+        # Si la respuesta es si, se ejecuta la función registrarUsuario()
+        if (confirmacion == "Yes"):
+            query = 'INSERT INTO usuarios (usuario, contraseña, nombre, apellido, correo, cedula, telefono) VALUES ("{}", "{}", "{}", "{}", "{}", "{}", "{}")'.format(
+            values['usuarioNuevo'], values['contraseñaNueva'], values['nombre'], values['apellido'], values['correo'], values['cedula'], values['telefono'])
+            parameters = ()
+            run_query(query, parameters)
+            sg.popup_ok("Éxito", "Usuario registrado")
+            
+        if (confirmacion == "No"):
+            # Limpia los campos de texto usando window.update()
+            window['usuarioNuevo'].update('')
+            window['contraseñaNueva'].update('')
+            window['nombre'].update('')
+            window['apellido'].update('')
+            window['correo'].update('')
+            window['cedula'].update('')
+            window['telefono'].update('')
 
 # Definición de la interfaz gráfica con una imagen, campos de texto y botón y etiquetas
-layout = [
+layout1 = [
     [sg.Image(r'logo.png', size=(100, 100), pad=(175, 0))],
     [sg.Text('Inicio de sesión y Registro', size=(25, 1), justification='center', pad=(75, 0), font=("Helvetica", 15))],
     [sg.Text('Usuario', size=(15, 1)), sg.InputText(key='usuario')],
@@ -108,7 +137,7 @@ layout = [
 ]
 
 # Carga de la interfaz gráfica
-window = sg.Window('Inicio de sesión', layout)
+window = sg.Window('Inicio de sesión', layout1)
 
 while True:
     # Lee los datos ingresados en la interfaz gráfica
@@ -123,11 +152,11 @@ while True:
     # Si presiona el botón de registrarse, se abre una ventana de registro
     elif event == 'Registrarse':
         sg.popup_ok("Registro", "Por favor, ingrese los datos solicitados")
-        layout = [
+        layout2 = [
             [sg.Text('Usuario', size=(15, 1)),
              sg.InputText(key='usuarioNuevo')],
-            [sg.Text('Contraseña', size=(15, 1)), sg.InputText(
-                key='contraseñaNueva', password_char='*')],
+            #Permite ingresar una contraseña
+            [sg.Text('Contraseña', size=(15, 1)), sg.InputText(key='contraseñaNueva', password_char='*')],
             # ingrese su nombre y apellido
             [sg.Text('Nombre', size=(15, 1)), sg.InputText(key='nombre')],
             [sg.Text('Apellido', size=(15, 1)), sg.InputText(key='apellido')],
@@ -142,7 +171,7 @@ while True:
              sg.InputText(key='telefono')],
             [sg.Button('Registrar'), sg.Button('Cancelar')]
         ]
-        window = sg.Window('Registro', layout)
+        window = sg.Window('Registro', layout2)
         while True:
             event, values = window.read()
             if event == 'Registrar':
