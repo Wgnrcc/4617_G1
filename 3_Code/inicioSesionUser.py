@@ -1,7 +1,6 @@
-# Programa que permite iniciar sesion como administrador a través de una interfaz gráfica
+# Programa que permite iniciar sesion y registro a través de una interfaz gráfica
 
 import sqlite3
-from pydoc import doc
 import PySimpleGUI as sg
 sg.theme('SystemDefault1')
 db_name = 'usuarios.db'
@@ -140,7 +139,7 @@ layout1 = [
     [sg.Text('Inicio de sesión y Registro', size=(25, 1), justification='center', pad=(75, 0), font=("Helvetica", 15))],
     [sg.Text('Usuario', size=(15, 1)), sg.InputText(key='usuario')],
     [sg.Text('Contraseña', size=(15, 1)), sg.InputText(key='contraseña', password_char='*')],
-    [sg.Button('Iniciar sesión'), sg.Button('Cancelar'), sg.Button('Registrarse')]
+    [sg.Button('Iniciar sesión'), sg.Button('Registrarse'), sg.Button('Acceso de Administrador'), sg.Button('Salir')],
 ]
 
 # Carga de la interfaz gráfica
@@ -152,8 +151,8 @@ while True:
     # Si se presiona el botón de iniciar sesión, se ejecuta la función validarInicioSesion
     if event == 'Iniciar sesión':
         validarInicioSesion(values['usuario'], values['contraseña'])
-    # Si se presiona el botón de cancelar, se cierra la ventana
-    elif event == 'Cancelar':
+    # Si se presiona el botón de salir, se cierra la ventana
+    elif event == 'Salir':
         window.close()
         break
     # Si presiona el botón de registrarse, se abre una ventana de registro
@@ -189,8 +188,11 @@ while True:
                 break
             elif event == sg.WIN_CLOSED:
                 break
-    # Si se presiona el botón de cancelar, se cierra la ventana
+        # Si se presiona el botón de cancelar, se cierra la ventana
     if event == 'Cancelar':
         break
     elif event == sg.WIN_CLOSED:
         break
+    elif event == 'Acceso de Administrador':
+        import os
+        os.system('python inicioSesionAdmin.py')
