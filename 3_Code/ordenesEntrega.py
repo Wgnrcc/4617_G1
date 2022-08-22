@@ -1,5 +1,4 @@
-#Programa de ordenes de entrega utilizando PySimpleGUI y SQLite
-#!/usr/bin/env python3
+#Programa de ordenes de entrega 
 
 import sqlite3
 db_name = 'ordenesEntrega.db'
@@ -14,12 +13,18 @@ def run_query(query, parameters = ()):
         conn.commit()
     return result
     
+#Funcion que valida la fecha
+#def validarFecha(fecha):
+    #
+
 #Definición de la interfaz gráfica con campos de texto y botón y etiquetas
 layout = [
     [sg.Text('Código de orden', size=(15, 1)), sg.InputText(key='codigo')],
     [sg.Text('Cliente', size=(15, 1)), sg.InputText(key='cliente')],
     [sg.Text('Nombre del producto', size=(15, 1)), sg.InputText(key='nombreProducto')],
     [sg.Text('Fecha de entrega', size=(15, 1)), sg.InputText(key='fecha')],
+    #Entrada para seleccionar fecha
+    #[sg.CalendarButton(button_text='Fecha de entrega', target='fecha')],
     [sg.Text('Dirección de entrega', size=(15, 1)), sg.InputText(key='direccion')],
     [sg.Button('Agregar'), sg.Button('Cancelar')]
 ]
@@ -62,8 +67,14 @@ def main():
         event = window.read()
         #Si se presiona el botón agregar
         if event == 'Agregar':
-            #Llama a la función agregarOrden
+            #Llama a la función validarFecha
+            #if validarFecha(values['fecha']):
+                #Llama a la función agregarOrden
             agregarOrden()
+            #Si la fecha no es correcta
+            #else:
+                #Muestra un mensaje de error
+                #sg.popup('Fecha no válida')
         #Si se presiona el botón cancelar
         if event == 'Cancelar':
             #Cierra la ventana
